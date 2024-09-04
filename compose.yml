@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  database:
+    image: postgres:15.1-alpine
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: kameiryohei
+      POSTGRES_PASSWORD: kameiryohei
+      POSTGRES_DB: kameiryohei
+    networks:
+      - app_network
+
+networks:
+  app_network:
