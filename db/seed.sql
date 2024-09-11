@@ -1,18 +1,18 @@
 -- universities
 INSERT INTO universities (id, name) VALUES 
-(1, '東京大学'),
-(2, '京都大学'),
-(3, '大阪大学');
+(1, '名城大学'),
+(2, '名古屋大学'),
+(3, 'ケンブリッジ大学');
 
 -- faculties
 INSERT INTO faculties (id, name, university_id) VALUES 
-(1, '理学部', 1),
+(1, '情報工学部', 1),
 (2, '工学部', 1),
 (3, '法学部', 2);
 
 -- departments
 INSERT INTO departments (id, name, faculty_id) VALUES 
-(1, '物理学科', 1),
+(1, '情報工学科', 1),
 (2, '化学科', 1),
 (3, '機械工学科', 2);
 
@@ -22,9 +22,9 @@ INSERT INTO users (id, email, password, name, university_id, faculty_id, departm
 (2, 'user2@example.com', 'password456', '佐藤花子', 2, 3, NULL, 3);
 
 -- plans
-INSERT INTO plans (id, title, content, user_id, created_at) VALUES 
-(1, '物理学勉強計画', '物理学の基礎から応用まで', 1, CURRENT_TIMESTAMP),
-(2, '法学習得プラン', '憲法と民法を中心に', 2, CURRENT_TIMESTAMP);
+INSERT INTO plans (id, title, content, user_id, created_at, updated_at) VALUES 
+(1, '情報学勉強計画', '情報学の基礎から応用まで', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, '法学習得プラン', '憲法と民法を中心に', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- courses
 INSERT INTO courses (id, name, content, plan_id, created_at, updated_at) VALUES 

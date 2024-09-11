@@ -8,6 +8,7 @@ type Plan struct {
 	Content   *string   `json:"content"`
 	UserID    uint      `json:"user_id" gorm:"not null"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 
 	User      User           `json:"user" gorm:"foreignKey:UserID"`
 	Courses   []Course       `json:"courses" gorm:"foreignKey:PlanID"`
