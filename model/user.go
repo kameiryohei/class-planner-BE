@@ -17,3 +17,8 @@ type User struct {
 	Plans      []Plan         `json:"plans" gorm:"foreignKey:UserID"`
 	Favorites  []FavoritePlan `json:"favorites" gorm:"foreignKey:UserID"`
 }
+
+type UserResponse struct {
+	ID    uint   `json:"id" gorm:"primaryKey"`
+	Email string `json:"email" gorm:"unique"`
+}
