@@ -11,22 +11,22 @@ type IUserRepository interface {
 	CreateUser(user *model.User) error
 }
 
-type userRepostiory struct {
-	db *gorm.DB
+type userRepository struct {
+	db *gorm.DB	
 }
 
 func NewUserRepository(db *gorm.DB) IUserRepository {
-	return &userRepostiory{db}
+	return &userRepository{db}
 }
-// emailが一致するユーザーを取得
-func (ur *userRepostiory) GetUserByEmail(user *model.User, email string) error {
+// dbの中からemailが一致するユーザーを取得
+func (ur *userRepository) GetUserByEmail(user *model.User, email string) error {
 	if err := ur.db.Where("email=?", email).First(user).Error; err != nil {
 		return err
 	}
 	return nil
 }
 // ユーザーを作成
-func (ur *userRepostiory) CreateUser(user *model.User) error {
+func (ur *userRepository) CreateUser(user *model.User) error {
 	if err := ur.db.Create(user).Error; err != nil {
 		return err
 	}
