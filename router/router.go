@@ -13,15 +13,15 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController) *ec
 	e.POST("/signup", uc.SignUp)
 	e.POST("/login", uc.LogIn)
 	e.POST("/logout", uc.Logout)
-	t := e.Group("/posts")
+	p := e.Group("/posts")
 	// middlewareを追加
-	t.Use(echojwt.WithConfig(echojwt.Config{
+	p.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey:  []byte(os.Getenv("SECRET")),
 		TokenLookup: "cookie:token",
 	}))
-	t.GET("", pc.GetAllPosts)
-	t.GET("/:postId", pc.GetPostByID)
-	t.POST("", pc.CreatePost)
-	t.DELETE("/:postId", pc.DeletePostByID)
+	p.GET("", pc.GetAllPosts)
+	p.GET("/:postId", pc.GetPostByID)
+	p.POST("", pc.CreatePost)
+	p.DELETE("/:postId", pc.DeletePostByID)
 	return e
 }
