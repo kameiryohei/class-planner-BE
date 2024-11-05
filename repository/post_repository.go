@@ -24,7 +24,7 @@ func NewPostRepository(db *gorm.DB) IPostRepository {
 
 // すべての投稿を取得
 func (pr *postRepository) GetAllPosts(posts *[]model.Post, userId uint) error {
-	if err := pr.db.Joins("User").Where("author_id = ?", userId).Order("created_at").Find(posts).Error; err != nil {
+	if err := pr.db.Joins("JOIN users ON users.id = posts.author_id").Where("author_id = ?", userId).Order("created_at").Find(posts).Error; err != nil {
 		return err
 	}
 	return nil
