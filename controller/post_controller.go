@@ -35,12 +35,9 @@ func (pc *postController) GetAllPosts(c echo.Context) error {
 }
 
 func (pc *postController) GetPostByID(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
-	id := c.Param("postId")
-	postId, _ := strconv.Atoi(id)
-	postRes, err := pc.pu.GetPostByID(uint(userId.(float64)), uint(postId))
+	id := c.Param("planId")
+	planId, _ := strconv.Atoi(id)
+	postRes, err := pc.pu.GetPostByID(uint(planId))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
