@@ -7,7 +7,7 @@ import (
 
 type IPostUsecase interface {
 	GetAllPosts() ([]model.PostResponse, error)
-	GetPostByID(postId uint, id uint) (model.PostResponse, error)
+	GetPostByID(planId uint) ([]model.PostResponse, error)
 	CreatePost(post model.Post) (model.PostResponse, error)
 	DeletePostByID(postId uint) error
 }
@@ -38,17 +38,22 @@ func (pu *postUsecase) GetAllPosts() ([]model.PostResponse, error) {
 
 }
 
-func (pu *postUsecase) GetPostByID(id uint, postId uint) (model.PostResponse, error) {
-	post := model.Post{}
-	if err := pu.pr.GetPostByID(&post, id, postId); err != nil {
-		return model.PostResponse{}, err
+func (pu *postUsecase) GetPostByID(planId uint) ([]model.PostResponse, error) {
+	posts := []model.Post{}
+	if err := pu.pr.GetPostByID(&posts, planId); err != nil {
+		return nil, err
 	}
-	resPost := model.PostResponse{
-		ID:        post.ID,
-		Content:   post.Content,
-		CreatedAt: post.CreatedAt,
+	resPosts := []model.PostResponse{}
+	for _, v := range posts {
+		p := model.PostResponse{
+			ID:        v.ID,
+			Content:   v.Content,
+			CreatedAt: v.CreatedAt,
+		}
+		resPosts = append(resPosts, p)
 	}
-	return resPost, nil
+
+	return resPosts, nil
 }
 
 func (pu *postUsecase) CreatePost(post model.Post) (model.PostResponse, error) {
