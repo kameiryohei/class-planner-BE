@@ -9,7 +9,7 @@ import (
 
 type IPostRepository interface {
 	GetAllPosts(posts *[]model.Post) error //ユーザーが作成した全ての投稿を取得
-	GetPostByID(post *model.Post, id uint, postId uint) error
+	GetPostByID(post *[]model.Post, planId uint) error
 	CreatePost(post model.Post) error
 	DeletePostByID(id uint) error
 }
@@ -31,8 +31,8 @@ func (pr *postRepository) GetAllPosts(posts *[]model.Post) error {
 }
 
 // 投稿IDで投稿を取得
-func (pr *postRepository) GetPostByID(post *model.Post, courseId uint, postId uint) error {
-	if err := pr.db.Joins("Plan").Where("id = ?", courseId).First(post, postId).Error; err != nil {
+func (pr *postRepository) GetPostByID(posts *[]model.Post, planId uint) error {
+	if err := pr.db.Joins("JOIN plans ON plans.id = posts.plan_id").Where("plan_id = ?", planId).Find(posts).Error; err != nil {
 		return err
 	}
 	return nil
