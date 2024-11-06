@@ -8,7 +8,7 @@ import (
 )
 
 type IPostRepository interface {
-	GetAllPosts(posts *[]model.Post) error //ユーザーが作成した全ての投稿を取得
+	GetAllPosts(posts *[]model.Post, author_id uint) error //ユーザーが作成した全ての投稿を取得
 	GetPostByID(post *[]model.Post, planId uint) error
 	CreatePost(post *model.Post) error
 	DeletePostByID(id uint) error
@@ -23,8 +23,8 @@ func NewPostRepository(db *gorm.DB) IPostRepository {
 }
 
 // すべての投稿を取得
-func (pr *postRepository) GetAllPosts(posts *[]model.Post) error {
-	if err := pr.db.Joins("JOIN users ON users.id = posts.author_id").Order("created_at").Find(posts).Error; err != nil {
+func (pr *postRepository) GetAllPosts(posts *[]model.Post, author_id uint) error {
+	if err := pr.db.Joins("JOIN users ON users.id = posts.author_id").Where("author_id = ?", author_id).Order("created_at").Find(posts).Error; err != nil {
 		return err
 	}
 	return nil
