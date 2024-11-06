@@ -10,7 +10,7 @@ import (
 type IPostRepository interface {
 	GetAllPosts(posts *[]model.Post) error //ユーザーが作成した全ての投稿を取得
 	GetPostByID(post *[]model.Post, planId uint) error
-	CreatePost(post model.Post) error
+	CreatePost(post *model.Post) error
 	DeletePostByID(id uint) error
 }
 
@@ -39,7 +39,7 @@ func (pr *postRepository) GetPostByID(posts *[]model.Post, planId uint) error {
 }
 
 // 投稿を作成
-func (pr *postRepository) CreatePost(post model.Post) error {
+func (pr *postRepository) CreatePost(post *model.Post) error {
 	if err := pr.db.Create(post).Error; err != nil {
 		return err
 	}

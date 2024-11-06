@@ -49,7 +49,7 @@ func (pc *postController) CreatePost(c echo.Context) error {
 	claims := user.Claims.(jwt.MapClaims)
 	userId := claims["user_id"]
 
-	post := model.Post{}
+	post := &model.Post{}
 	if err := c.Bind(&post); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}

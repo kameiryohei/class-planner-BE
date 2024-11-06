@@ -8,7 +8,7 @@ import (
 type IPostUsecase interface {
 	GetAllPosts() ([]model.PostResponse, error)
 	GetPostByID(planId uint) ([]model.PostResponse, error)
-	CreatePost(post model.Post) (model.PostResponse, error)
+	CreatePost(post *model.Post) (model.PostResponse, error)
 	DeletePostByID(postId uint) error
 }
 
@@ -56,7 +56,7 @@ func (pu *postUsecase) GetPostByID(planId uint) ([]model.PostResponse, error) {
 	return resPosts, nil
 }
 
-func (pu *postUsecase) CreatePost(post model.Post) (model.PostResponse, error) {
+func (pu *postUsecase) CreatePost(post *model.Post) (model.PostResponse, error) {
 	if err := pu.pr.CreatePost(post); err != nil {
 		return model.PostResponse{}, err
 	}
