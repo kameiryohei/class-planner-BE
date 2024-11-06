@@ -8,6 +8,8 @@ services:
       POSTGRES_USER: kameiryohei
       POSTGRES_PASSWORD: kameiryohei
       POSTGRES_DB: kameiryohei
+    volumes:
+      - ./db:/app/db # ホストのdbディレクトリをコンテナの/app/dbにマウント
     networks:
       - app_network
 
