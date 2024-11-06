@@ -6,7 +6,7 @@ import (
 )
 
 type IPostUsecase interface {
-	GetAllPosts(userId uint) ([]model.PostResponse, error)
+	GetAllPosts() ([]model.PostResponse, error)
 	GetPostByID(postId uint, id uint) (model.PostResponse, error)
 	CreatePost(post model.Post) (model.PostResponse, error)
 	DeletePostByID(postId uint) error
@@ -20,9 +20,9 @@ func NewPostUsecase(pr repository.IPostRepository) IPostUsecase {
 	return &postUsecase{pr}
 }
 
-func (pu *postUsecase) GetAllPosts(userId uint) ([]model.PostResponse, error) {
+func (pu *postUsecase) GetAllPosts() ([]model.PostResponse, error) {
 	posts := []model.Post{}
-	if err := pu.pr.GetAllPosts(&posts, userId); err != nil {
+	if err := pu.pr.GetAllPosts(&posts); err != nil {
 		return nil, err
 	}
 	resPosts := []model.PostResponse{}

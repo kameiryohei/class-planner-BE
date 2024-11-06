@@ -26,11 +26,8 @@ func NewTaskController(pu usecase.IPostUsecase) IPostController {
 }
 
 func (pc *postController) GetAllPosts(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
 
-	postRes, err := pc.pu.GetAllPosts(uint(userId.(float64)))
+	postRes, err := pc.pu.GetAllPosts()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
