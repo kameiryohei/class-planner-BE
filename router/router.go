@@ -22,6 +22,6 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController) *ec
 	p.GET("", pc.GetAllPosts)
 	p.GET("/:planId", pc.GetPostByID)
 	p.POST("", pc.CreatePost)
-	p.DELETE("/:planId", pc.DeletePostByID)
+	p.DELETE("/:postId", pc.DeletePostByID)
 	return e
 }
