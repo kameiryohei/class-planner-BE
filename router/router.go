@@ -20,8 +20,8 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController) *ec
 		TokenLookup: "cookie:token",
 	}))
 	p.GET("", pc.GetAllPosts)
-	p.GET("/:postId", pc.GetPostByID)
+	p.GET("/:planId", pc.GetPostByID)
 	p.POST("", pc.CreatePost)
-	p.DELETE("/:postId", pc.DeletePostByID)
+	p.DELETE("/:planId", pc.DeletePostByID)
 	return e
 }
