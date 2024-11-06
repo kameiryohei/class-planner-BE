@@ -32,10 +32,9 @@ INSERT INTO courses (id, name, content, plan_id, created_at, updated_at) VALUES
 (2, '憲法概論', '日本国憲法の基礎', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- posts
-INSERT INTO posts (id, content, published, author_id, plan_id) VALUES 
-(1, '今日は運動方程式について学びました', true, 1, 1),
-(2, '憲法の基本原理についてまとめました', true, 2, 2);
-
+INSERT INTO posts (id, content, plan_id, created_at, author_id ) VALUES 
+(1, '力学入門の勉強法を教えてください', 1, CURRENT_TIMESTAMP, 1),
+(2, '憲法概論の勉強法を教えてください', 2, CURRENT_TIMESTAMP, 2);
 -- favorite_plans
 INSERT INTO favorite_plans (id, user_id, plan_id) VALUES 
 (1, 2, 1),
