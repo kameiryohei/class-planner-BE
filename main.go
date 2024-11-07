@@ -6,14 +6,17 @@ import (
 	"backend/repository"
 	"backend/router"
 	"backend/usecase"
+	"backend/validator"
 )
 
 func main() {
 	db := db.NewDB()
+	userValidator := validator.NewUserValidator()
+	postValidator := validator.NewPostValidator()
 	userRepository := repository.NewUserRepository(db)
 	postRepository := repository.NewPostRepository(db)
-	userUsecase := usecase.NewUserUsecase(userRepository)
-	postUsecase := usecase.NewPostUsecase(postRepository)
+	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
+	postUsecase := usecase.NewPostUsecase(postRepository, postValidator)
 	userController := controller.NewUserController(userUsecase)
 	postController := controller.NewTaskController(postUsecase)
 	e := router.NewRouter(userController, postController)
