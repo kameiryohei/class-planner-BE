@@ -3,6 +3,7 @@ package usecase
 import (
 	"backend/model"
 	"backend/repository"
+	"backend/validator"
 )
 
 type IPostUsecase interface {
@@ -14,10 +15,11 @@ type IPostUsecase interface {
 
 type postUsecase struct {
 	pr repository.IPostRepository
+	pv validator.IPostValidator
 }
 
-func NewPostUsecase(pr repository.IPostRepository) IPostUsecase {
-	return &postUsecase{pr}
+func NewPostUsecase(pr repository.IPostRepository, pv validator.IPostValidator) IPostUsecase {
+	return &postUsecase{pr, pv}
 }
 
 func (pu *postUsecase) GetAllPosts(author_id uint) ([]model.PostResponse, error) {
@@ -57,6 +59,10 @@ func (pu *postUsecase) GetPostByID(planId uint) ([]model.PostResponse, error) {
 }
 
 func (pu *postUsecase) CreatePost(post *model.Post) (model.PostResponse, error) {
+	if err := pu.pv.PostValidate(*post); err != nil {
+		return model.PostResponse{}, err
+	}
+
 	if err := pu.pr.CreatePost(post); err != nil {
 		return model.PostResponse{}, err
 	}
