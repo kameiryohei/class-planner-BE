@@ -58,7 +58,7 @@ func (pc *postController) CreatePost(c echo.Context) error {
 	post.AuthorID = uint(userId.(float64))
 	postRes, err := pc.pu.CreatePost(post)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusCreated, postRes)
 }
