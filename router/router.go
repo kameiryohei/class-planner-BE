@@ -13,8 +13,18 @@ import (
 func NewRouter(uc controller.IUserController, pc controller.IPostController) *echo.Echo {
 	e := echo.New()
 
+	// 環境に応じて許可するオリジンを切り替える
+	var allowedOrigins []string
+	if os.Getenv("GO_ENV") == "dev" {
+		// 開発環境
+		allowedOrigins = []string{"http://localhost:3000", os.Getenv("FE_URL")}
+	} else {
+		// 本番環境
+		allowedOrigins = []string{os.Getenv("FE_URL")}
+	}
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FE_URL")},
+		AllowOrigins: allowedOrigins,
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept,
 			echo.HeaderAccessControlAllowHeaders, echo.HeaderXCSRFToken},
 		AllowMethods:     []string{"GET", "POST", "DELETE", "PUT"},
@@ -26,7 +36,7 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController) *ec
 		CookieHTTPOnly: true,
 		// CookieSameSite: http.SameSiteNoneMode,
 		CookieSameSite: http.SameSiteDefaultMode, //postmanでのテストのため
-		CookieMaxAge:   60,
+		// CookieMaxAge:   60,
 	}))
 
 	e.POST("/signup", uc.SignUp)
