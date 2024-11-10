@@ -32,6 +32,7 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController) *ec
 	e.POST("/signup", uc.SignUp)
 	e.POST("/login", uc.LogIn)
 	e.POST("/logout", uc.Logout)
+	e.GET("/csrf", uc.CsrfToken)
 	p := e.Group("/posts")
 	// middlewareを追加
 	p.Use(echojwt.WithConfig(echojwt.Config{
