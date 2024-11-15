@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func NewRouter(uc controller.IUserController, pc controller.IPostController) *echo.Echo {
+func NewRouter(uc controller.IUserController, pc controller.IPostController, plc controller.IPlanController) *echo.Echo {
 	e := echo.New()
 
 	// 環境に応じて許可するオリジンを切り替える
@@ -44,14 +44,22 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController) *ec
 	e.POST("/logout", uc.Logout)
 	e.GET("/csrf", uc.CsrfToken)
 	p := e.Group("/posts")
+	pl := e.Group("/plans")
 	// middlewareを追加
 	p.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey:  []byte(os.Getenv("SECRET")),
 		TokenLookup: "cookie:token",
 	}))
+
 	p.GET("", pc.GetAllPosts)
 	p.GET("/:planId", pc.GetPostByID)
 	p.POST("", pc.CreatePost)
 	p.DELETE("/:postId", pc.DeletePostByID)
+
+	pl.GET("", plc.GetAllPlans)
+	pl.GET("/:planId", plc.GetPlansByID)
+	pl.POST("", plc.CreatePlan)
+	pl.DELETE("/:planId", plc.DeletePlanByID)
+
 	return e
 }
