@@ -34,7 +34,7 @@ type PlanDetailResponse struct {
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	User      User           `json:"user"`
-	Courses   []Course       `json:"courses"`
-	Posts     []Post         `json:"posts"`
-	Favorites []FavoritePlan `json:"favorites"`
+	Courses   []Course       `json:"courses" gorm:"foreignKey:PlanID"`
+	Posts     []Post         `json:"posts" gorm:"foreignKey:PlanID"`
+	Favorites []FavoritePlan `json:"favorites" gorm:"foreignKey:PlanID"`
 }
