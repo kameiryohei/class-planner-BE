@@ -2,14 +2,13 @@ package repository
 
 import (
 	"backend/model"
-	"fmt"
 
 	"gorm.io/gorm"
 )
 
 type IPlanRepository interface {
 	GetAllPlans(plans *[]model.Plan) error
-	GetPlanByID(plan *model.PlanDetailResponse, planId uint) error
+	GetPlanByID(plan *model.Plan, planId uint) error
 	CreatePlan(plan *model.Plan) error
 	UpdatePlan(plan *model.Plan) error
 	DeletePlanByID(planId uint) error
@@ -27,11 +26,10 @@ func (pr *planRepository) GetAllPlans(plans *[]model.Plan) error {
 	if err := pr.db.Preload("User").Preload("Courses").Preload("Posts").Preload("Favorites").Find(plans).Error; err != nil {
 		return err
 	}
-	fmt.Println(plans)
 	return nil
 }
 
-func (pr *planRepository) GetPlanByID(plan *model.PlanDetailResponse, planId uint) error {
+func (pr *planRepository) GetPlanByID(plan *model.Plan, planId uint) error {
 	if err := pr.db.Preload("User").Preload("Courses").Preload("Posts").Preload("Favorites").Where("id = ?", planId).First(plan).Error; err != nil {
 		return err
 	}
