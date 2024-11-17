@@ -12,3 +12,9 @@ type Course struct {
 
 	Plan Plan `json:"plan" gorm:"foreignKey:PlanID"`
 }
+type CourseResponse struct {
+	ID      uint    `json:"id" gorm:"primaryKey"`
+	Name    string  `json:"name"`
+	Content *string `json:"content"`
+	PlanID  uint    `json:"plan_id"`
+}
