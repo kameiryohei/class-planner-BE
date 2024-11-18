@@ -23,7 +23,11 @@ func NewPlanRepository(db *gorm.DB) IPlanRepository {
 }
 
 func (pr *planRepository) GetAllPlans(plans *[]model.Plan) error {
-	if err := pr.db.Preload("User").Preload("Courses").Preload("Posts").Preload("Favorites").Find(plans).Error; err != nil {
+	if err := pr.db.Preload("User").
+		Preload("User.University").
+		Preload("User.Faculty").
+		Preload("User.Department").
+		Find(plans).Error; err != nil {
 		return err
 	}
 	return nil
