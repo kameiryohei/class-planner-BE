@@ -34,7 +34,14 @@ func (pr *planRepository) GetAllPlans(plans *[]model.Plan) error {
 }
 
 func (pr *planRepository) GetPlanByID(plan *model.Plan, planId uint) error {
-	if err := pr.db.Preload("User").Preload("Courses").Preload("Posts").Preload("Favorites").Where("id = ?", planId).First(plan).Error; err != nil {
+	if err := pr.db.Preload("User").
+		Preload("User.University").
+		Preload("User.Faculty").
+		Preload("User.Department").
+		Preload("Courses").
+		Preload("Posts").
+		Preload("Favorites").
+		Where("id = ?", planId).First(plan).Error; err != nil {
 		return err
 	}
 	return nil
