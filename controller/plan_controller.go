@@ -25,7 +25,12 @@ func NewPlanController(pu usecase.IPlanUsecase) IPlanController {
 }
 
 func (pc *planController) GetAllPlans(c echo.Context) error {
-	postRes, err := pc.pu.GetAllPlans()
+	offset, _ := strconv.Atoi(c.QueryParam("offset"))
+	limit, _ := strconv.Atoi(c.QueryParam("limit"))
+	if limit == 0 {
+		limit = 10 // デフォルトのリミットをは10に設定
+	}
+	postRes, err := pc.pu.GetAllPlans(offset, limit)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
