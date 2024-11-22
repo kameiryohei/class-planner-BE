@@ -6,7 +6,7 @@ import (
 )
 
 type IPlanUsecase interface {
-	GetAllPlans() ([]model.PlanResponse, error)
+	GetAllPlans(offset int, limit int) ([]model.PlanResponse, error)
 	GetPlanByID(planId uint) (model.PlanDetailResponse, error)
 	CreatePlan(plan *model.Plan) (model.PlanResponse, error)
 	UpdatePlan(plan *model.Plan) (model.PlanResponse, error)
@@ -21,9 +21,9 @@ func NewPlanUsecase(pr repository.IPlanRepository) IPlanUsecase {
 	return &planUsecase{pr}
 }
 
-func (pu *planUsecase) GetAllPlans() ([]model.PlanResponse, error) {
+func (pu *planUsecase) GetAllPlans(offset int, limit int) ([]model.PlanResponse, error) {
 	plans := []model.Plan{}
-	if err := pu.pr.GetAllPlans(&plans); err != nil {
+	if err := pu.pr.GetAllPlans(&plans, offset, limit); err != nil {
 		return nil, err
 	}
 	resPlans := []model.PlanResponse{}
