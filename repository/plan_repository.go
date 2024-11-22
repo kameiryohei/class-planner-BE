@@ -7,7 +7,7 @@ import (
 )
 
 type IPlanRepository interface {
-	GetAllPlans(plans *[]model.Plan) error
+	GetAllPlans(plans *[]model.Plan, offset int, limit int) error
 	GetPlanByID(plan *model.Plan, planId uint) error
 	CreatePlan(plan *model.Plan) error
 	UpdatePlan(plan *model.Plan) error
@@ -22,11 +22,13 @@ func NewPlanRepository(db *gorm.DB) IPlanRepository {
 	return &planRepository{db}
 }
 
-func (pr *planRepository) GetAllPlans(plans *[]model.Plan) error {
+func (pr *planRepository) GetAllPlans(plans *[]model.Plan, offset int, limit int) error {
 	if err := pr.db.Preload("User").
 		Preload("User.University").
 		Preload("User.Faculty").
 		Preload("User.Department").
+		Offset(offset).
+		Limit(limit).
 		Find(plans).Error; err != nil {
 		return err
 	}
