@@ -7,7 +7,7 @@ import (
 
 type IPlanUsecase interface {
 	GetAllPlans() ([]model.PlanResponse, error)
-	GetPlanByID(planId uint) (model.Plan, error)
+	GetPlanByID(planId uint) (model.PlanDetailResponse, error)
 	CreatePlan(plan *model.Plan) (model.PlanResponse, error)
 	UpdatePlan(plan *model.Plan) (model.PlanResponse, error)
 	DeletePlanByID(planId uint) error
@@ -35,29 +35,67 @@ func (pu *planUsecase) GetAllPlans() ([]model.PlanResponse, error) {
 			UserID:    v.UserID,
 			CreatedAt: v.CreatedAt,
 			UpdatedAt: v.UpdatedAt,
-			User:      v.User,
+			UserResponse: model.UserResponse{
+				ID:         v.User.ID,
+				Email:      v.User.Email,
+				University: v.User.University,
+				Faculty:    v.User.Faculty,
+				Department: v.User.Department,
+			},
 		}
 		resPlans = append(resPlans, p)
 	}
 	return resPlans, nil
 }
 
-func (pu *planUsecase) GetPlanByID(planId uint) (model.Plan, error) {
+func (pu *planUsecase) GetPlanByID(planId uint) (model.PlanDetailResponse, error) {
 	plan := model.Plan{}
 	if err := pu.pr.GetPlanByID(&plan, planId); err != nil {
-		return model.Plan{}, err
+		return model.PlanDetailResponse{}, err
 	}
-	resPlan := model.Plan{
+
+	courses := []model.CourseResponse{}
+	for _, course := range plan.Courses {
+		courses = append(courses, model.CourseResponse{
+			ID:      course.ID,
+			Name:    course.Name,
+			Content: course.Content,
+		})
+	}
+	posts := []model.PostResponse{}
+	for _, post := range plan.Posts {
+		posts = append(posts, model.PostResponse{
+			ID:        post.ID,
+			Content:   post.Content,
+			CreatedAt: post.CreatedAt,
+		})
+	}
+	favorites := []model.FavoritePlanResponse{}
+	for _, favorite := range plan.Favorites {
+		favorites = append(favorites, model.FavoritePlanResponse{
+			ID:     favorite.ID,
+			UserID: favorite.UserID,
+			PlanID: favorite.PlanID,
+		})
+	}
+
+	resPlan := model.PlanDetailResponse{
 		ID:        plan.ID,
 		Title:     plan.Title,
 		Content:   plan.Content,
 		UserID:    plan.UserID,
 		CreatedAt: plan.CreatedAt,
 		UpdatedAt: plan.UpdatedAt,
-		User:      plan.User,
-		Courses:   plan.Courses,
-		Posts:     plan.Posts,
-		Favorites: plan.Favorites,
+		User: model.UserResponse{
+			ID:         plan.User.ID,
+			Email:      plan.User.Email,
+			University: plan.User.University,
+			Faculty:    plan.User.Faculty,
+			Department: plan.User.Department,
+		},
+		Courses:   courses,
+		Posts:     posts,
+		Favorites: favorites,
 	}
 	return resPlan, nil
 }
@@ -73,7 +111,6 @@ func (pu *planUsecase) CreatePlan(plan *model.Plan) (model.PlanResponse, error) 
 		UserID:    plan.UserID,
 		CreatedAt: plan.CreatedAt,
 		UpdatedAt: plan.UpdatedAt,
-		User:      plan.User,
 	}
 	return resPlan, nil
 }
@@ -89,7 +126,6 @@ func (pu *planUsecase) UpdatePlan(plan *model.Plan) (model.PlanResponse, error) 
 		UserID:    plan.UserID,
 		CreatedAt: plan.CreatedAt,
 		UpdatedAt: plan.UpdatedAt,
-		User:      plan.User,
 	}
 	return resPlan, nil
 }
