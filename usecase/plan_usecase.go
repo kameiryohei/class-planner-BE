@@ -8,7 +8,7 @@ import (
 type IPlanUsecase interface {
 	GetAllPlans(offset int, limit int) ([]model.PlanResponse, error)
 	GetPlanByID(planId uint) (model.PlanDetailResponse, error)
-	CreatePlan(plan *model.Plan) (model.PlanResponse, error)
+	CreatePlan(plan *model.Plan) (model.PlanBaseResponse, error)
 	UpdatePlan(plan *model.Plan) (model.PlanResponse, error)
 	DeletePlanByID(planId uint) error
 }
@@ -100,11 +100,11 @@ func (pu *planUsecase) GetPlanByID(planId uint) (model.PlanDetailResponse, error
 	return resPlan, nil
 }
 
-func (pu *planUsecase) CreatePlan(plan *model.Plan) (model.PlanResponse, error) {
+func (pu *planUsecase) CreatePlan(plan *model.Plan) (model.PlanBaseResponse, error) {
 	if err := pu.pr.CreatePlan(plan); err != nil {
-		return model.PlanResponse{}, err
+		return model.PlanBaseResponse{}, err
 	}
-	resPlan := model.PlanResponse{
+	resPlan := model.PlanBaseResponse{
 		ID:        plan.ID,
 		Title:     plan.Title,
 		Content:   plan.Content,
@@ -120,12 +120,7 @@ func (pu *planUsecase) UpdatePlan(plan *model.Plan) (model.PlanResponse, error) 
 		return model.PlanResponse{}, err
 	}
 	resPlan := model.PlanResponse{
-		ID:        plan.ID,
-		Title:     plan.Title,
-		Content:   plan.Content,
-		UserID:    plan.UserID,
-		CreatedAt: plan.CreatedAt,
-		UpdatedAt: plan.UpdatedAt,
+		ID: plan.ID,
 	}
 	return resPlan, nil
 }
