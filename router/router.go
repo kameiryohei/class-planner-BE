@@ -45,21 +45,24 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController, plc
 		CookieSameSite: http.SameSiteDefaultMode, //postmanでのテストのため
 		// CookieMaxAge:   60,
 	}))
+	// グループ化
+	p := e.Group("/posts")
+	pl := e.Group("/plans")
 
+	// 認証に関するエンドポイント
 	e.POST("/signup", uc.SignUp)
 	e.POST("/login", uc.LogIn)
 	e.POST("/logout", uc.Logout)
 	e.GET("/csrf", uc.CsrfToken)
-	p := e.Group("/posts")
-	pl := e.Group("/plans")
-	// middlewareを追加
-	p.Use(jwtMiddleware())
 
+	// postに関するエンドポイント
+	p.Use(jwtMiddleware())
 	p.GET("", pc.GetAllPosts)
 	p.GET("/:planId", pc.GetPostByID)
 	p.POST("", pc.CreatePost)
 	p.DELETE("/:postId", pc.DeletePostByID)
 
+	// planに関するエンドポイント
 	pl.Use(jwtMiddleware())
 	pl.GET("", plc.GetAllPlans)
 	pl.GET("/:planId", plc.GetPlansByID)
