@@ -8,3 +8,9 @@ type FavoritePlan struct {
 	User User `json:"user" gorm:"foreignKey:UserID"`
 	Plan Plan `json:"plan" gorm:"foreignKey:PlanID"`
 }
+
+type FavoritePlanResponse struct {
+	ID     uint `json:"id" gorm:"primaryKey"`
+	UserID uint `json:"user_id"`
+	PlanID uint `json:"plan_id"`
+}
