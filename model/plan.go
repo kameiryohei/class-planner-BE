@@ -45,3 +45,10 @@ type PlanDetailResponse struct {
 	Posts     []PostResponse         `json:"posts" gorm:"foreignKey:PlanID"`
 	Favorites []FavoritePlanResponse `json:"favorites" gorm:"foreignKey:PlanID"`
 }
+type PlanUpdateResponse struct {
+	ID        uint      `json:"id"`
+	Title     string    `json:"title"`
+	Content   *string   `json:"content"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
