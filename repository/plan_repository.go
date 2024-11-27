@@ -10,7 +10,7 @@ type IPlanRepository interface {
 	GetAllPlans(plans *[]model.Plan, offset int, limit int) error
 	GetPlanByID(plan *model.Plan, planId uint) error
 	CreatePlan(plan *model.Plan) error
-	UpdatePlan(plan *model.Plan) error
+	UpdatePlan(plan *model.Plan, planId int) error
 	DeletePlanByID(planId uint) error
 }
 
@@ -56,8 +56,11 @@ func (pr *planRepository) CreatePlan(plan *model.Plan) error {
 	return nil
 }
 
-func (pr *planRepository) UpdatePlan(plan *model.Plan) error {
-	if err := pr.db.Save(plan).Error; err != nil {
+func (pr *planRepository) UpdatePlan(plan *model.Plan, planId int) error {
+	if err := pr.db.Model(&model.Plan{}).Where("id = ?", planId).Updates(plan).Error; err != nil {
+		return err
+	}
+	if err := pr.db.Where("id = ?", planId).First(plan).Error; err != nil {
 		return err
 	}
 	return nil
