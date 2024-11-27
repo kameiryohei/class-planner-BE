@@ -67,6 +67,7 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController, plc
 	pl.GET("", plc.GetAllPlans)
 	pl.GET("/:planId", plc.GetPlansByID)
 	pl.POST("", plc.CreatePlan)
+	pl.PUT("/:planId", plc.UpdatePlan)
 	pl.DELETE("/:planId", plc.DeletePlanByID)
 
 	return e
