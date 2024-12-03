@@ -26,7 +26,7 @@ func (plv *PlanValidator) PlanValidate(plan model.Plan) error {
 		validation.Field(
 			&plan.Content,
 			validation.Required.Error("Content is required"),
-			validation.Length(1, 50).Error("limited max 50 characters"),
+			validation.Length(1, 100).Error("limited max 100 characters"),
 		),
 	)
 }
