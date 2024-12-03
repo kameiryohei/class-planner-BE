@@ -3,6 +3,7 @@ package usecase
 import (
 	"backend/model"
 	"backend/repository"
+	"backend/validator"
 )
 
 type IPlanUsecase interface {
@@ -14,11 +15,12 @@ type IPlanUsecase interface {
 }
 
 type planUsecase struct {
-	pr repository.IPlanRepository
+	pr  repository.IPlanRepository
+	plv validator.IPlanValidator
 }
 
-func NewPlanUsecase(pr repository.IPlanRepository) IPlanUsecase {
-	return &planUsecase{pr}
+func NewPlanUsecase(pr repository.IPlanRepository, plv validator.IPlanValidator) IPlanUsecase {
+	return &planUsecase{pr, plv}
 }
 
 func (pu *planUsecase) GetAllPlans(offset int, limit int) ([]model.PlanResponse, error) {
@@ -101,6 +103,10 @@ func (pu *planUsecase) GetPlanByID(planId uint) (model.PlanDetailResponse, error
 }
 
 func (pu *planUsecase) CreatePlan(plan *model.Plan) (model.PlanBaseResponse, error) {
+	if err := pu.plv.PlanValidate(*plan); err != nil {
+		return model.PlanBaseResponse{}, err
+	}
+
 	if err := pu.pr.CreatePlan(plan); err != nil {
 		return model.PlanBaseResponse{}, err
 	}
@@ -116,6 +122,10 @@ func (pu *planUsecase) CreatePlan(plan *model.Plan) (model.PlanBaseResponse, err
 }
 
 func (pu *planUsecase) UpdatePlan(plan *model.Plan, planId int) (model.PlanUpdateResponse, error) {
+	if err := pu.plv.PlanValidate(*plan); err != nil {
+		return model.PlanUpdateResponse{}, err
+	}
+
 	if err := pu.pr.UpdatePlan(plan, planId); err != nil {
 		return model.PlanUpdateResponse{}, err
 	}
