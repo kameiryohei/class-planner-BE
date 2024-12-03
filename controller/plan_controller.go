@@ -61,7 +61,7 @@ func (pc *planController) CreatePlan(c echo.Context) error {
 	plan.UserID = userId
 	planRes, err := pc.pu.CreatePlan(plan)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, planRes)
 }
@@ -81,7 +81,7 @@ func (pc *planController) UpdatePlan(c echo.Context) error {
 	plan.UserID = userId
 	planRes, err := pc.pu.UpdatePlan(plan, planId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, planRes)
 }
