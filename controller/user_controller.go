@@ -15,6 +15,8 @@ type IUserController interface {
 	LogIn(c echo.Context) error
 	Logout(c echo.Context) error
 	CsrfToken(c echo.Context) error
+	GoogleLogin(c echo.Context) error
+	GoogleCallback(c echo.Context) error
 }
 type userController struct {
 	uu usecase.IUserUsecase
@@ -77,4 +79,36 @@ func (uc *userController) CsrfToken(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"csrf_token": token,
 	})
+}
+
+func (uc *userController) GoogleLogin(c echo.Context) error {
+	url := uc.uu.GetGoogleAuthURL()
+	return c.JSON(http.StatusOK, echo.Map{
+		"url": url,
+	})
+}
+
+func (uc *userController) GoogleCallback(c echo.Context) error {
+	code := c.QueryParam("code")
+	if code == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Code not found"})
+	}
+
+	tokenString, err := uc.uu.GoogleCallback(code)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+
+	cookie := new(http.Cookie)
+	cookie.Name = "token"
+	cookie.Value = tokenString
+	cookie.Expires = time.Now().Add(24 * time.Hour)
+	cookie.Path = "/"
+	cookie.Secure = true
+	cookie.Domain = os.Getenv("API_DOMAIN")
+	cookie.HttpOnly = true
+	cookie.SameSite = http.SameSiteNoneMode
+	c.SetCookie(cookie)
+
+	return c.Redirect(http.StatusTemporaryRedirect, os.Getenv("FE_URL"))
 }
