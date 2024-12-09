@@ -1,6 +1,7 @@
 package main
 
 import (
+	"backend/auth"
 	"backend/controller"
 	"backend/db"
 	"backend/repository"
@@ -11,13 +12,14 @@ import (
 
 func main() {
 	db := db.NewDB()
+	googleAuthConfig := auth.NewGoogleAuthConfig()
 	userValidator := validator.NewUserValidator()
 	postValidator := validator.NewPostValidator()
 	planValidator := validator.NewPlanValidator()
 	userRepository := repository.NewUserRepository(db)
 	postRepository := repository.NewPostRepository(db)
 	planRepository := repository.NewPlanRepository(db)
-	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
+	userUsecase := usecase.NewUserUsecase(userRepository, userValidator, googleAuthConfig)
 	postUsecase := usecase.NewPostUsecase(postRepository, postValidator)
 	planUsecase := usecase.NewPlanUsecase(planRepository, planValidator)
 	userController := controller.NewUserController(userUsecase)

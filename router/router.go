@@ -43,7 +43,7 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController, plc
 		CookieHTTPOnly: true,
 		// CookieSameSite: http.SameSiteNoneMode,
 		CookieSameSite: http.SameSiteDefaultMode, //postmanでのテストのため
-		// CookieMaxAge:   60,
+		// CookieMaxAge: 86400,
 	}))
 	// グループ化
 	p := e.Group("/posts")
@@ -54,6 +54,8 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController, plc
 	e.POST("/login", uc.LogIn)
 	e.POST("/logout", uc.Logout)
 	e.GET("/csrf", uc.CsrfToken)
+	e.GET("/auth/google/login", uc.GoogleLogin)
+	e.GET("/auth/google/callback", uc.GoogleCallback)
 
 	// postに関するエンドポイント
 	p.Use(jwtMiddleware())
