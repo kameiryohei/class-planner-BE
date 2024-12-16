@@ -79,7 +79,7 @@ func NewRouter(
 
 	// courseに関するエンドポイント
 	c.Use(jwtMiddleware())
-	c.GET("/:planId", cc.GetAllCourses)
+	c.GET("/:courseId", cc.GetAllCourses)
 	c.POST("", cc.CreateCourse)
 	c.PUT("/:courseId", cc.UpdateCourse)
 	c.DELETE("/:courseId", cc.DeleteCourseByID)
