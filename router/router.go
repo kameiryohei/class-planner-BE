@@ -17,7 +17,11 @@ func jwtMiddleware() echo.MiddlewareFunc {
 	})
 }
 
-func NewRouter(uc controller.IUserController, pc controller.IPostController, plc controller.IPlanController) *echo.Echo {
+func NewRouter(
+	uc controller.IUserController,
+	pc controller.IPostController,
+	plc controller.IPlanController,
+	cc controller.ICourseController) *echo.Echo {
 	e := echo.New()
 
 	// 環境に応じて許可するオリジンを切り替える
@@ -48,6 +52,7 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController, plc
 	// グループ化
 	p := e.Group("/posts")
 	pl := e.Group("/plans")
+	c := e.Group("/courses")
 
 	// 認証に関するエンドポイント
 	e.POST("/signup", uc.SignUp)
@@ -71,6 +76,13 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController, plc
 	pl.POST("", plc.CreatePlan)
 	pl.PUT("/:planId", plc.UpdatePlan)
 	pl.DELETE("/:planId", plc.DeletePlanByID)
+
+	// courseに関するエンドポイント
+	c.Use(jwtMiddleware())
+	c.GET("/:planId", cc.GetAllCourses)
+	c.POST("", cc.CreateCourse)
+	c.PUT("/:courseId", cc.UpdateCourse)
+	c.DELETE("/:courseId", cc.DeleteCourseByID)
 
 	return e
 }
