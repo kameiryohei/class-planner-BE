@@ -43,8 +43,12 @@ func (cr *courseRepository) UpdateCourse(course *model.Course, courseId int) err
 }
 
 func (cr *courseRepository) DeleteCourseByID(courseId uint) error {
-	if err := cr.db.Where("id = ?", courseId).Delete(&model.Course{}).Error; err != nil {
-		return err
+	result := cr.db.Where("id = ?", courseId).Delete(&model.Course{})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected < 1 {
+		return gorm.ErrRecordNotFound
 	}
 	return nil
 }
