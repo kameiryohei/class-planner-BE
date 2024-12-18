@@ -11,7 +11,7 @@ import (
 
 type ICourseController interface {
 	GetAllCourses(c echo.Context) error
-	CreateCourse(c echo.Context) error
+	CreateCourses(c echo.Context) error
 	UpdateCourse(c echo.Context) error
 	DeleteCourseByID(c echo.Context) error
 }
@@ -34,16 +34,18 @@ func (cc *courseController) GetAllCourses(c echo.Context) error {
 	return c.JSON(200, postRes)
 }
 
-func (cc *courseController) CreateCourse(c echo.Context) error {
-	course := &[]model.Course{}
-	if err := c.Bind(course); err != nil {
+func (cc *courseController) CreateCourses(c echo.Context) error {
+	var courses []model.Course
+	if err := c.Bind(&courses); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	postRes, err := cc.cu.CreateCourse(course)
+
+	createdCourses, err := cc.cu.CreateCourses(courses)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	return c.JSON(http.StatusOK, postRes)
+
+	return c.JSON(http.StatusCreated, createdCourses)
 }
 
 func (cc *courseController) UpdateCourse(c echo.Context) error {
