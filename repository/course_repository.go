@@ -8,7 +8,7 @@ import (
 
 type ICourseRepository interface {
 	GetAllCourses(courses *[]model.Course, planId uint) error
-	CreateCourse(course *[]model.Course) error
+	CreateCourses(courses *[]model.Course) error
 	UpdateCourse(course *model.Course, courseId int) error
 	DeleteCourseByID(courseId uint) error
 }
@@ -28,11 +28,9 @@ func (cr *courseRepository) GetAllCourses(courses *[]model.Course, planId uint) 
 	return nil
 }
 
-func (cr *courseRepository) CreateCourse(course *[]model.Course) error {
-	for _, c := range *course {
-		if err := cr.db.Create(&c).Error; err != nil {
-			return err
-		}
+func (cr *courseRepository) CreateCourses(courses *[]model.Course) error {
+	if err := cr.db.Create(courses).Error; err != nil {
+		return err
 	}
 	return nil
 }
