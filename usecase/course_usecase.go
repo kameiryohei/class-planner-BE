@@ -57,7 +57,11 @@ func (cu *courseUsecase) UpdateCourse(course *model.Course, courseId int) (model
 	if err := cu.cr.UpdateCourse(course, courseId); err != nil {
 		return model.CourseResponse{}, err
 	}
-	return model.CourseResponse{}, nil
+	return model.CourseResponse{
+		ID:      uint(courseId),
+		Name:    course.Name,
+		Content: course.Content,
+	}, nil
 }
 
 func (cu *courseUsecase) DeleteCourseByID(courseId uint) error {
