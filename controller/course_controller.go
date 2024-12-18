@@ -72,5 +72,5 @@ func (cc *courseController) DeleteCourseByID(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-	return c.JSON(http.StatusOK, "Deleted")
+	return c.JSON(http.StatusOK, map[string]string{"success": "Course deleted successfully"})
 }
