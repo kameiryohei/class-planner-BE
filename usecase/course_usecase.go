@@ -7,7 +7,7 @@ import (
 
 type ICourseUsecase interface {
 	GetAllCourses(planId uint) ([]model.CourseResponse, error)
-	CreateCourse(course *[]model.Course) (model.CourseResponse, error)
+	CreateCourses(courses []model.Course) ([]model.CourseResponse, error)
 	UpdateCourse(course *model.Course, courseId int) (model.CourseResponse, error)
 	DeleteCourseByID(courseId uint) error
 }
@@ -37,11 +37,20 @@ func (cu *courseUsecase) GetAllCourses(planId uint) ([]model.CourseResponse, err
 	return resCourses, nil
 }
 
-func (cu *courseUsecase) CreateCourse(course *[]model.Course) (model.CourseResponse, error) {
-	if err := cu.cr.CreateCourse(course); err != nil {
-		return model.CourseResponse{}, err
+func (cu *courseUsecase) CreateCourses(courses []model.Course) ([]model.CourseResponse, error) {
+	if err := cu.cr.CreateCourses(&courses); err != nil {
+		return nil, err
 	}
-	return model.CourseResponse{}, nil
+	resCourses := []model.CourseResponse{}
+	for _, v := range courses {
+		c := model.CourseResponse{
+			ID:      v.ID,
+			Name:    v.Name,
+			Content: v.Content,
+		}
+		resCourses = append(resCourses, c)
+	}
+	return resCourses, nil
 }
 
 func (cu *courseUsecase) UpdateCourse(course *model.Course, courseId int) (model.CourseResponse, error) {
