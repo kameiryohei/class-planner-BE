@@ -44,6 +44,8 @@ func NewRouter(
 	pl.POST("", plc.CreatePlan)
 	pl.PUT("/:planId", plc.UpdatePlan)
 	pl.DELETE("/:planId", plc.DeletePlanByID)
+	pl.POST("/:planId/favorite", plc.ToggleFavoritePlan)
+	pl.GET("/:planId/favorite/count", plc.GetFavoriteCount)
 
 	// courseに関するエンドポイント
 	c.GET("/:courseId", cc.GetAllCourses)

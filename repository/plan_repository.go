@@ -2,6 +2,7 @@ package repository
 
 import (
 	"backend/model"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -10,8 +11,10 @@ type IPlanRepository interface {
 	GetAllPlans(plans *[]model.Plan, offset int, limit int) error
 	GetPlanByID(plan *model.Plan, planId uint) error
 	CreatePlan(plan *model.Plan) error
-	UpdatePlan(plan *model.Plan, planId int) error
+	UpdatePlan(plan *model.Plan, planId uint) error
 	DeletePlanByID(planId uint) error
+	ToggleFavoritePlan(userId uint, planId uint) error
+	GetFavoriteCount(planId uint) (int64, error)
 }
 
 type planRepository struct {
@@ -19,51 +22,42 @@ type planRepository struct {
 }
 
 func NewPlanRepository(db *gorm.DB) IPlanRepository {
-	return &planRepository{db}
+	return &planRepository{db: db}
 }
 
 func (pr *planRepository) GetAllPlans(plans *[]model.Plan, offset int, limit int) error {
-	if err := pr.db.Preload("User").
+	return pr.db.Preload("User").
 		Preload("User.University").
 		Preload("User.Faculty").
 		Preload("User.Department").
 		Offset(offset).
 		Limit(limit).
-		Find(plans).Error; err != nil {
-		return err
-	}
-	return nil
+		Find(plans).Error
 }
 
 func (pr *planRepository) GetPlanByID(plan *model.Plan, planId uint) error {
-	if err := pr.db.Preload("User").
+	return pr.db.Preload("User").
 		Preload("User.University").
 		Preload("User.Faculty").
 		Preload("User.Department").
 		Preload("Courses").
 		Preload("Posts").
 		Preload("Favorites").
-		Where("id = ?", planId).First(plan).Error; err != nil {
-		return err
-	}
-	return nil
+		Where("id = ?", planId).
+		First(plan).Error
 }
 
 func (pr *planRepository) CreatePlan(plan *model.Plan) error {
-	if err := pr.db.Create(plan).Error; err != nil {
-		return err
-	}
-	return nil
+	return pr.db.Create(plan).Error
 }
 
-func (pr *planRepository) UpdatePlan(plan *model.Plan, planId int) error {
-	if err := pr.db.Model(&model.Plan{}).Where("id = ?", planId).Updates(plan).Error; err != nil {
+func (pr *planRepository) UpdatePlan(plan *model.Plan, planId uint) error {
+	if err := pr.db.Model(&model.Plan{}).
+		Where("id = ?", planId).
+		Updates(plan).Error; err != nil {
 		return err
 	}
-	if err := pr.db.Where("id = ?", planId).First(plan).Error; err != nil {
-		return err
-	}
-	return nil
+	return pr.db.Where("id = ?", planId).First(plan).Error
 }
 
 func (pr *planRepository) DeletePlanByID(planId uint) error {
@@ -75,4 +69,31 @@ func (pr *planRepository) DeletePlanByID(planId uint) error {
 		return gorm.ErrRecordNotFound
 	}
 	return nil
+}
+
+func (pr *planRepository) ToggleFavoritePlan(userId uint, planId uint) error {
+	var favoritePlan model.FavoritePlan
+	result := pr.db.Where("user_id = ? AND plan_id = ?", userId, planId).First(&favoritePlan)
+
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		// お気に入りが存在しない場合は新規作成
+		newFavorite := model.FavoritePlan{
+			UserID: userId,
+			PlanID: planId,
+		}
+		return pr.db.Create(&newFavorite).Error
+	} else if result.Error != nil {
+		return result.Error
+	}
+
+	// お気に入りが既に存在する場合は削除
+	return pr.db.Delete(&favoritePlan).Error
+}
+
+func (pr *planRepository) GetFavoriteCount(planId uint) (int64, error) {
+	var count int64
+	err := pr.db.Model(&model.FavoritePlan{}).
+		Where("plan_id = ?", planId).
+		Count(&count).Error
+	return count, err
 }
