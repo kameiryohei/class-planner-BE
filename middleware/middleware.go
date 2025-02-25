@@ -45,3 +45,29 @@ func CsrfMiddleware() echo.MiddlewareFunc {
 		CookieSameSite: http.SameSiteDefaultMode,
 	})
 }
+
+// JWTトークンが存在する場合のみ検証を行い、存在しない場合はリクエストを通過させるミドルウェア
+func OptionalJwtMiddleware() echo.MiddlewareFunc {
+	config := echojwt.Config{
+		SigningKey:  []byte(os.Getenv("SECRET")),
+		TokenLookup: "cookie:token",
+	}
+
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			cookie, err := c.Cookie("token")
+			// トークンが存在する場合は検証
+			if err == nil && cookie.Value != "" {
+				// JWT検証を実行
+				jwtMiddleware := echojwt.WithConfig(config)
+				handler := jwtMiddleware(func(c echo.Context) error {
+					// 検証成功時は何もせず次に進む
+					return nil
+				})
+				// エラーが発生しても無視して次に進む
+				_ = handler(c)
+			}
+			return next(c)
+		}
+	}
+}

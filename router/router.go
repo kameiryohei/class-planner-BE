@@ -11,7 +11,8 @@ func NewRouter(
 	uc controller.IUserController,
 	pc controller.IPostController,
 	plc controller.IPlanController,
-	cc controller.ICourseController) *echo.Echo {
+	cc controller.ICourseController,
+	ccu controller.ICommentController) *echo.Echo {
 	e := echo.New()
 
 	e.Use(middleware.CorsMiddleware())
@@ -21,6 +22,8 @@ func NewRouter(
 	p := e.Group("/posts")
 	pl := e.Group("/plans")
 	c := e.Group("/courses")
+	comments := e.Group("/comments")
+	authComments := e.Group("/comments")
 
 	// 認証に関するエンドポイント
 	e.POST("/signup", uc.SignUp)
@@ -52,6 +55,16 @@ func NewRouter(
 	c.POST("", cc.CreateCourses)
 	c.PUT("/:courseId", cc.UpdateCourse)
 	c.DELETE("/:courseId", cc.DeleteCourseByID)
+
+	// コメント関連のルート（認証不要）
+	comments.Use(middleware.OptionalJwtMiddleware())
+	comments.POST("", ccu.CreateComment)
+	comments.GET("/plan/:planId", ccu.GetCommentsByPlanID)
+
+	// 認証が必要なコメント関連のルート
+	authComments.Use(middleware.JwtMiddleware())
+	authComments.GET("/me", ccu.GetMyComments)
+	authComments.DELETE("/:commentId", ccu.DeleteComment)
 
 	return e
 }
