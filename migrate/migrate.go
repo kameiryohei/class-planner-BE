@@ -18,5 +18,7 @@ func main() {
 		&model.Faculty{},
 		&model.FavoritePlan{},
 		&model.Plan{},
-		&model.Post{})
+		&model.Post{},
+		&model.Comment{},
+	)
 }
