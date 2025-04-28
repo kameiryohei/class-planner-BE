@@ -5,7 +5,7 @@ toolchain go1.24.1
 
 require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
-	github.com/golang-jwt/jwt/v4 v4.5.0
+	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo-jwt/v4 v4.1.0
 	github.com/labstack/echo/v4 v4.12.0
