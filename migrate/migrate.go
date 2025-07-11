@@ -20,5 +20,7 @@ func main() {
 		&model.Plan{},
 		&model.Post{},
 		&model.Comment{},
+		&model.TimetableAnalysis{},
+		&model.ExtractedClass{},
 	)
 }

@@ -12,7 +12,8 @@ func NewRouter(
 	pc controller.IPostController,
 	plc controller.IPlanController,
 	cc controller.ICourseController,
-	ccu controller.ICommentController) *echo.Echo {
+	ccu controller.ICommentController,
+	tc controller.ITimetableController) *echo.Echo {
 	e := echo.New()
 
 	e.Use(middleware.CorsMiddleware())
@@ -22,6 +23,7 @@ func NewRouter(
 	p := e.Group("/posts")
 	pl := e.Group("/plans")
 	c := e.Group("/courses")
+	t := e.Group("/timetable")
 	comments := e.Group("/comments")
 	authComments := e.Group("/comments")
 
@@ -65,6 +67,14 @@ func NewRouter(
 	authComments.Use(middleware.JwtMiddleware())
 	authComments.GET("/me", ccu.GetMyComments)
 	authComments.DELETE("/:commentId", ccu.DeleteComment)
+
+	// timetableに関するエンドポイント
+	t.Use(middleware.JwtMiddleware())
+	t.POST("/upload", tc.UploadTimetable)
+	t.GET("/analyses", tc.GetUserAnalyses)
+	t.GET("/analysis/:analysisId", tc.GetAnalysis)
+	t.POST("/analysis/:analysisId/confirm", tc.ConfirmClasses)
+	t.DELETE("/analysis/:analysisId", tc.DeleteAnalysis)
 
 	return e
 }

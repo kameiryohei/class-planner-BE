@@ -24,3 +24,7 @@ go.work.sum
 # env file
 .env
 .cursor
+
+# uploads directory
+uploads/
+main

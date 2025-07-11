@@ -19,6 +19,7 @@ func main() {
 	userValidator := validator.NewUserValidator()
 	postValidator := validator.NewPostValidator()
 	planValidator := validator.NewPlanValidator()
+	timetableValidator := validator.NewTimetableValidator()
 
 	// repository
 	userRepository := repository.NewUserRepository(db)
@@ -26,6 +27,7 @@ func main() {
 	planRepository := repository.NewPlanRepository(db)
 	courseRepository := repository.NewCourseRepository(db)
 	commentRepository := repository.NewCommentRepository(db)
+	timetableRepository := repository.NewTimetableRepository(db)
 
 	// usecase
 	userUsecase := usecase.NewUserUsecase(userRepository, userValidator, googleAuthConfig)
@@ -33,6 +35,7 @@ func main() {
 	planUsecase := usecase.NewPlanUsecase(planRepository, planValidator)
 	courseUsecase := usecase.NewCourseUsecase(courseRepository)
 	commentUsecase := usecase.NewCommentUsecase(commentRepository)
+	timetableUsecase := usecase.NewTimetableUsecase(timetableRepository, courseRepository, timetableValidator)
 
 	// controller
 	userController := controller.NewUserController(userUsecase)
@@ -40,8 +43,9 @@ func main() {
 	planController := controller.NewPlanController(planUsecase)
 	courseController := controller.NewCourseController(courseUsecase)
 	commentController := controller.NewCommentController(commentUsecase)
+	timetableController := controller.NewTimetableController(timetableUsecase)
 
 	// router
-	e := router.NewRouter(userController, postController, planController, courseController, commentController)
+	e := router.NewRouter(userController, postController, planController, courseController, commentController, timetableController)
 	e.Logger.Fatal(e.Start(":8080"))
 }
