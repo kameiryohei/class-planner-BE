@@ -24,3 +24,4 @@ go.work.sum
 # env file
 .env
 .cursor
+.DS_Store
