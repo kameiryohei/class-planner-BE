@@ -25,7 +25,7 @@ func NewRouter(
 	comments := e.Group("/comments")
 	authComments := e.Group("/comments")
 
-	// 認証に関するエンドポイント
+	// 認証系
 	e.POST("/signup", uc.SignUp)
 	e.POST("/login", uc.LogIn)
 	e.POST("/logout", uc.Logout)
@@ -33,14 +33,14 @@ func NewRouter(
 	e.GET("/auth/google/login", uc.GoogleLogin)
 	e.GET("/auth/google/callback", uc.GoogleCallback)
 
-	// postに関するエンドポイント
+	// post
 	p.Use(middleware.JwtMiddleware())
 	p.GET("", pc.GetAllPosts)
 	p.GET("/:planId", pc.GetPostByID)
 	p.POST("", pc.CreatePost)
 	p.DELETE("/:postId", pc.DeletePostByID)
 
-	// planに関するエンドポイント
+	// plan
 	pl.Use(middleware.JwtMiddleware())
 	pl.GET("", plc.GetAllPlans)
 	pl.GET("/:planId", plc.GetPlansByID)
@@ -50,18 +50,18 @@ func NewRouter(
 	pl.POST("/:planId/favorite", plc.ToggleFavoritePlan)
 	pl.GET("/:planId/favorite/count", plc.GetFavoriteCount)
 
-	// courseに関するエンドポイント
+	// course
 	c.GET("/:courseId", cc.GetAllCourses)
 	c.POST("", cc.CreateCourses)
 	c.PUT("/:courseId", cc.UpdateCourse)
 	c.DELETE("/:courseId", cc.DeleteCourseByID)
 
-	// コメント関連のルート（認証不要）
+	// comment(no auth required)
 	comments.Use(middleware.OptionalJwtMiddleware())
 	comments.POST("", ccu.CreateComment)
 	comments.GET("/plan/:planId", ccu.GetCommentsByPlanID)
 
-	// 認証が必要なコメント関連のルート
+	// comment(auth required)
 	authComments.Use(middleware.JwtMiddleware())
 	authComments.GET("/me", ccu.GetMyComments)
 	authComments.DELETE("/:commentId", ccu.DeleteComment)
