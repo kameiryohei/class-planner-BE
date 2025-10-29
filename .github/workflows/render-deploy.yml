@@ -9,8 +9,31 @@ on:
       - main # mainブランチへのプルリクエスト時に実行
 
 jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Check formatting
+        run: |
+          changed="$(gofmt -l .)"
+          if [ -n "$changed" ]; then
+            echo "Go files need formatting:"
+            echo "$changed"
+            exit 1
+          fi
+
   deploy:
     name: Deploy to Render
+    needs: verify
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: ttskch/render-deploy@v1.0.0
