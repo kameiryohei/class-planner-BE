@@ -56,11 +56,11 @@ cp .env.example .env
 
 クローン後、以下の Make コマンドを使用してセットアップを行う。
 
-````bash
-make setup
 ```bash
+make setup
+# OR
 make setup/first
-````
+```
 
 その後サーバー起動
 
